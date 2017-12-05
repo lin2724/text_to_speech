@@ -6,6 +6,8 @@ import time
 import os
 import hashlib
 import pydub
+
+
 def _get_param_by_text(text):
     urlpro = urllib.quote(text)
     if _get_text_len(urlpro) >= 200:
@@ -40,11 +42,15 @@ def _get_mp3_form_url(url, storepath):
     if not os.path.exists(storepath):
         os.mkdir(storepath)
     try:
+        newname = md5(url) + '.mp3'
+        newnamepath = os.path.join(storepath, newname)
+        if os.path.exists(newnamepath):
+            print 'Already have this mp3 skip'
+            return newnamepath
         content = urllib2.urlopen(url, timeout=500).read()
         with open(os.path.join(storepath, filename), 'wb+') as fd:
             fd.write(content)
-        newname = md5(os.path.join(storepath, filename)) + '.mp3'
-        newnamepath = os.path.join(storepath, newname)
+
         if os.path.exists(newname):
             os.remove(newname)
         try:
@@ -77,18 +83,10 @@ def get_mp3_by_text(text):
     mp3url = _get_girl_url(_get_param_by_text(text))
     mp3file =  _get_mp3_form_url(mp3url, 'audio')
     return mp3file
-    newwav = None
-    #try:
-    #newwav =  convert_to_wav(mp3file)
-    #except:
-    #    print ('error occur when convert to wav')
-    #    print sys.exc_info()[0]
-    #return newwav
 
 
 def get_wav_by_file(file):
-    mpfile = []
-    #try:
+    mpfile = list()
     with open(file, 'r') as fd:
         while True:
             line = fd.read(380)
@@ -103,20 +101,23 @@ def get_wav_by_file(file):
                 mpfile.append(tmp)
             #print line
         mpfile = _convert_to_wav(mpfile)
-    #except:
-     #   print ('except occur when get mp3 by file')
-     #   print (sys.exc_info()[0])
-     #   pass
+
     return mpfile
 
 
 def md5(fname):
     hash_md5 = hashlib.md5()
+    hash_md5.update(fname)
+    return hash_md5.hexdigest()
+    """
     with open(fname, "rb") as f:
         for chunk in iter(lambda: f.read(4096), b""):
             hash_md5.update(chunk)
     return hash_md5.hexdigest()
-def _convert_to_wav(files = []):
+    """
+
+
+def _convert_to_wav(files):
     print ('convert')
     converttype = 'wav'
     newfiles = []
@@ -149,10 +150,13 @@ def _convert_to_wav(files = []):
     os.rename(tmpfilpath, newfilepath)
     print ('convert done')
     return newfilepath
+
 if __name__ == '__main__':
-    file =[]
-    file.append(os.path.join('audio', 'huoyuanjia.mp3'))
-    print (_convert_to_wav(file))
+    get_mp3_by_text("符天海")
+
+    #file =[]
+    #file.append(os.path.join('audio', 'huoyuanjia.mp3'))
+    #print (_convert_to_wav(file))
 
 
 
