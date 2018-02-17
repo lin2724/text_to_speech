@@ -84,9 +84,11 @@ def _get_text_len(urlpro):
     return (ass+1)/2 + (utf+2)/3
 
 
-def get_mp3_by_text(text):
+def get_mp3_by_text(text, store_path=None):
     mp3url = _get_girl_url(_get_param_by_text(text))
-    mp3file =  _get_mp3_form_url(mp3url, 'audio')
+    if not store_path:
+        store_path = 'audio'
+    mp3file =  _get_mp3_form_url(mp3url, store_path)
     return mp3file
 
 
@@ -160,7 +162,7 @@ def _convert_to_wav(files):
     return newfilepath
 
 if __name__ == '__main__':
-    get_mp3_by_text("符天海")
+    get_mp3_by_text("大家晚上好", None)
 
     #file =[]
     #file.append(os.path.join('audio', 'huoyuanjia.mp3'))
