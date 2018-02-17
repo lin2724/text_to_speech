@@ -5,7 +5,12 @@ import sys
 import time
 import os
 import hashlib
-import pydub
+try:
+    import pydub
+    gUsingPyDub = True
+except ImportError:
+    gUsingPyDub = False
+    pass
 
 
 def _get_param_by_text(text):
@@ -121,6 +126,9 @@ def _convert_to_wav(files):
     print ('convert')
     converttype = 'wav'
     newfiles = []
+    if not gUsingPyDub:
+        print 'Failed to get pydub'
+        return ''
     print (files)
     for fil in files:
         song = pydub.AudioSegment.from_mp3(fil)
